@@ -11,6 +11,7 @@ import Browse from "./pages/Browse";
 import Category from "./pages/Category";
 import Library from "./pages/Library";
 import Admin from "./pages/Admin";
+import UsernameSetup from "./pages/UsernameSetup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
               <Route path="/category/:slug" element={<Category />} />
               <Route path="/library" element={<Library />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/setup-username" element={<UsernameSetup />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
