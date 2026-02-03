@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, Menu, X, BookOpen, User, LogOut } from "lucide-react";
+import { Search, Menu, X, BookOpen, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsAdmin } from "@/hooks/useAdmin";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,6 +23,7 @@ export function Header({ onSearch }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, profile, signOut } = useAuth();
+  const { data: isAdmin } = useIsAdmin();
   const navigate = useNavigate();
 
   const handleSearch = (e: React.FormEvent) => {
@@ -85,6 +87,14 @@ export function Header({ onSearch }: HeaderProps) {
                       My Library
                     </Link>
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
+                        <Shield className="h-4 w-4" />
+                        Admin Portal
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleSignOut} className="flex items-center gap-2 cursor-pointer text-destructive">
                     <LogOut className="h-4 w-4" />
@@ -148,6 +158,14 @@ export function Header({ onSearch }: HeaderProps) {
                       My Library
                     </Link>
                   </Button>
+                  {isAdmin && (
+                    <Button variant="ghost" asChild className="justify-start">
+                      <Link to="/admin">
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Portal
+                      </Link>
+                    </Button>
+                  )}
                   <Button variant="ghost" onClick={handleSignOut} className="justify-start text-destructive">
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
