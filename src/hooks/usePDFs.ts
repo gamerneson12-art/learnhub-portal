@@ -30,6 +30,46 @@ export function usePDFs({ categorySlug, searchQuery, limit = 50 }: UsePDFsOption
   return useQuery({
     queryKey: ["pdfs", categorySlug, searchQuery, limit],
     queryFn: async (): Promise<PDF[]> => {
+      // If searching, we need to check category names too
+      if (searchQuery) {
+        // First, find categories that match the search query
+        const { data: matchingCategories } = await supabase
+          .from("categories")
+          .select("id")
+          .ilike("name", `%${searchQuery}%`);
+
+        const categoryIds = matchingCategories?.map((c) => c.id) || [];
+
+        // Build the query with OR conditions for title, description, author, and matching categories
+        let query = supabase
+          .from("pdfs")
+          .select(`
+            *,
+            categories (
+              name,
+              slug
+            )
+          `)
+          .order("created_at", { ascending: false })
+          .limit(limit);
+
+        // Search in title, description, author, OR if category matches
+        if (categoryIds.length > 0) {
+          query = query.or(
+            `title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%,category_id.in.(${categoryIds.join(",")})`
+          );
+        } else {
+          query = query.or(
+            `title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,author.ilike.%${searchQuery}%`
+          );
+        }
+
+        const { data, error } = await query;
+        if (error) throw error;
+        return data || [];
+      }
+
+      // No search query - standard query
       let query = supabase
         .from("pdfs")
         .select(`
@@ -52,10 +92,6 @@ export function usePDFs({ categorySlug, searchQuery, limit = 50 }: UsePDFsOption
         if (category) {
           query = query.eq("category_id", category.id);
         }
-      }
-
-      if (searchQuery) {
-        query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
       }
 
       const { data, error } = await query;
