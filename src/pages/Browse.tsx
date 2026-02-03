@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function Browse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
+  const [activeTab, setActiveTab] = useState("categories");
   const [viewerPdf, setViewerPdf] = useState<{ url: string; title: string } | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -29,17 +30,33 @@ export default function Browse() {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     setActiveSearch(query);
+    if (query) {
+      setActiveTab("all");
+    }
   };
 
   const handleFormSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setActiveSearch(searchQuery);
+    if (searchQuery) {
+      setActiveTab("all");
+    }
   };
 
   const handleSearchInputChange = (value: string) => {
     setSearchQuery(value);
-    // If search is cleared, reset active search immediately
+    // If search is cleared, reset active search and go back to categories
     if (!value.trim()) {
+      setActiveSearch("");
+      setActiveTab("categories");
+    }
+  };
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    // Clear search when going back to categories
+    if (value === "categories") {
+      setSearchQuery("");
       setActiveSearch("");
     }
   };
@@ -130,7 +147,7 @@ export default function Browse() {
           </form>
 
           {/* Tabs */}
-          <Tabs defaultValue={activeSearch ? "all" : "categories"} value={activeSearch ? "all" : undefined} className="space-y-6">
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-6">
             <TabsList>
               <TabsTrigger value="categories">Categories</TabsTrigger>
               <TabsTrigger value="all">{activeSearch ? `Results for "${activeSearch}"` : "All PDFs"}</TabsTrigger>
