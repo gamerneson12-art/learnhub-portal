@@ -147,12 +147,12 @@ export default function Auth() {
         <Card className="shadow-lg">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">
-              {isSignUp ? "Create your account" : "Welcome back"}
+              {isSignUp ? "Create your account" : "Sign in"}
             </CardTitle>
             <CardDescription>
               {isSignUp
                 ? "Sign up to access free coding PDFs"
-                : "Sign in to continue learning"}
+                : "Enter your credentials to continue"}
             </CardDescription>
           </CardHeader>
 
