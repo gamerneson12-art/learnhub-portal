@@ -46,10 +46,32 @@ export default function Auth() {
     },
   });
 
+  // Check if user is logged in and handle redirect based on username confirmation
   useEffect(() => {
-    if (user) {
-      navigate("/browse");
-    }
+    const checkUserAndRedirect = async () => {
+      if (user) {
+        // Check if username is confirmed
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("username_confirmed")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error("Error checking username confirmation:", error);
+          navigate("/browse");
+          return;
+        }
+
+        if (data?.username_confirmed) {
+          navigate("/browse");
+        } else {
+          navigate("/setup-username");
+        }
+      }
+    };
+
+    checkUserAndRedirect();
   }, [user, navigate]);
 
   useEffect(() => {
@@ -101,7 +123,21 @@ export default function Auth() {
             throw error;
           }
         } else {
-          navigate("/browse");
+          // Check username confirmation before redirect
+          const { data: session } = await supabase.auth.getSession();
+          if (session?.session?.user) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("username_confirmed")
+              .eq("user_id", session.session.user.id)
+              .maybeSingle();
+
+            if (profile?.username_confirmed) {
+              navigate("/browse");
+            } else {
+              navigate("/setup-username");
+            }
+          }
         }
       }
     } catch (error: any) {

@@ -135,6 +135,7 @@ export type Database = {
           updated_at: string
           user_id: string
           username: string
+          username_confirmed: boolean
         }
         Insert: {
           avatar_url?: string | null
@@ -144,6 +145,7 @@ export type Database = {
           updated_at?: string
           user_id: string
           username: string
+          username_confirmed?: boolean
         }
         Update: {
           avatar_url?: string | null
@@ -153,6 +155,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           username?: string
+          username_confirmed?: boolean
         }
         Relationships: []
       }
@@ -182,6 +185,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_username_availability: {
+        Args: { desired_username: string }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
