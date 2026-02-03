@@ -22,10 +22,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light";
-      root.classList.add(systemTheme);
+      root.classList.add("light");
     } else {
       root.classList.add(theme);
     }
