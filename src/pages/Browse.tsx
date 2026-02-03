@@ -25,12 +25,21 @@ export default function Browse() {
   const trackDownload = useTrackDownload();
 
   const handleSearch = (query: string) => {
+    setSearchQuery(query);
     setActiveSearch(query);
   };
 
   const handleFormSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setActiveSearch(searchQuery);
+  };
+
+  const handleSearchInputChange = (value: string) => {
+    setSearchQuery(value);
+    // If search is cleared, reset active search immediately
+    if (!value.trim()) {
+      setActiveSearch("");
+    }
   };
 
   const handleViewPDF = (id: string) => {
@@ -110,7 +119,7 @@ export default function Browse() {
                   type="search"
                   placeholder="Search PDFs by title or description..."
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => handleSearchInputChange(e.target.value)}
                   className="pl-10"
                 />
               </div>
