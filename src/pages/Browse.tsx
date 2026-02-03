@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Filter, Loader2 } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { CategoryCard } from "@/components/CategoryCard";
 import { PDFCard } from "@/components/PDFCard";
+import { PDFViewer } from "@/components/PDFViewer";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function Browse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeSearch, setActiveSearch] = useState("");
+  const [viewerPdf, setViewerPdf] = useState<{ url: string; title: string } | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -55,7 +57,7 @@ export default function Browse() {
 
     const pdf = pdfs?.find((p) => p.id === id);
     if (pdf) {
-      window.open(pdf.file_url, "_blank");
+      setViewerPdf({ url: pdf.file_url, title: pdf.title });
     }
   };
 
@@ -195,6 +197,16 @@ export default function Browse() {
       </main>
 
       <Footer />
+
+      {/* PDF Viewer Modal */}
+      {viewerPdf && (
+        <PDFViewer
+          isOpen={!!viewerPdf}
+          onClose={() => setViewerPdf(null)}
+          pdfUrl={viewerPdf.url}
+          title={viewerPdf.title}
+        />
+      )}
     </div>
   );
 }
