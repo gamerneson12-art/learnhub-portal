@@ -119,10 +119,10 @@ export default function Browse() {
           </form>
 
           {/* Tabs */}
-          <Tabs defaultValue="categories" className="space-y-6">
+          <Tabs defaultValue={activeSearch ? "all" : "categories"} value={activeSearch ? "all" : undefined} className="space-y-6">
             <TabsList>
               <TabsTrigger value="categories">Categories</TabsTrigger>
-              <TabsTrigger value="all">All PDFs</TabsTrigger>
+              <TabsTrigger value="all">{activeSearch ? `Results for "${activeSearch}"` : "All PDFs"}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="categories" className="space-y-6">
